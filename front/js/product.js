@@ -5,6 +5,7 @@ console.log(params);
 // const item__img = document.getElementsByClassName("item__img");
 
 getItem();
+addToCart();
 
 function getItem (){
    fetch(`http://localhost:3000/api/products/${params}`)
@@ -49,4 +50,43 @@ function updateSelectorChoice(colors) {
       select.appendChild(option);
    }
 }
+
+function addToCart() {
+   const btnAddToCart = document.getElementById("addToCart");
+   btnAddToCart.addEventListener("click", () =>{
+      const quantity = document.getElementById("quantity");
+      const title = document.getElementById("title");
+      const price = document.getElementById("price");
+
+      if (quantity.value > 0 && quantity.value < 100) {
+         let infoProduct = {
+            name: title.innerHTML,
+            price: parseFloat(price.innerHTML),
+            quantity: parseFloat(document.getElementById("quantity").value),
+            _id: params,
+          };
+          console.log(infoProduct);
+         let arrayOfProducts = [];
+         if (localStorage.getItem("products") !== null) {
+            arrayOfProducts = JSON.parse(localStorage.getItem("products"));
+
+          } 
+          arrayOfProducts.push(infoProduct);
+            localStorage.setItem("products", JSON.stringify(arrayOfProducts));
+
+            console.log(arrayOfProducts)
+      }
+   } )
+}
+
+// document.getElementById("addToCart").onclick = function addToCart() {
+//    let objJson = {
+//       id : objectID,
+//       quantity : document.getElementById("quantity").value,
+//       color : document.getElementById("colors").value
+//   }
+//   console.log(objJson);
+//   let cartItem = JSON.stringify(objJson);
+//   localStorage.setItem("cartItem", cartItem);
+// }
 
