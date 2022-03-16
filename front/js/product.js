@@ -5,7 +5,7 @@ console.log(params);
 // const item__img = document.getElementsByClassName("item__img");
 
 getItem();
-addToCart();
+// addToCart();
 
 function getItem (){
    fetch(`http://localhost:3000/api/products/${params}`)
@@ -26,44 +26,49 @@ function getItem (){
 }
 
 function show(value){
-   const item__img = document.querySelector(".item__img")
+   const item__img = document.querySelector(".item__img");
    let imgItem = document.createElement("img");
-
+console.log("Show say hello");
+console.log(item__img);
    item__img.appendChild(imgItem).src =`${value.imageUrl}`;
    item__img.appendChild(imgItem).alt =`${value.altTxt}`;
 
-   document.getElementById("price").innerHTML = `${value.price}`;
-   document.getElementById("description").innerHTML = `${value.description}`;
-   document.getElementById("title").innerHTML = `${value.name}`;
+   document.getElementById("price").textContent = `${value.price}`;
+   document.getElementById("description").textContent = `${value.description}`;
+   document.getElementById("title").textContent = `${value.name}`;
 
    updateSelectorChoice(value.colors)
 }
 
 function updateSelectorChoice(colors) {
-   var select = document.getElementById("colors");
+   let select = document.getElementById("colors");
 
-   for(var i = 0; i < colors.length; i++) {
-      var color = colors[i];
-      var option = document.createElement("option");
+   for(let i = 0; i < colors.length; i++) {
+      let color = colors[i];
+      let option = document.createElement("option");
       option.textContent = color;
       option.value = color;
       select.appendChild(option);
    }
 }
 
-function addToCart() {
+// function addToCart() {
+   // save also the color!
    const btnAddToCart = document.getElementById("addToCart");
    btnAddToCart.addEventListener("click", () =>{
       const quantity = document.getElementById("quantity");
-      const title = document.getElementById("title");
-      const price = document.getElementById("price");
+      // const title = document.getElementById("title");
+      // const price = document.getElementById("price");
+      const selectColor = document.getElementById("colors").value;
+      
 
       if (quantity.value > 0 && quantity.value < 100) {
          let infoProduct = {
-            name: title.innerHTML,
-            price: parseFloat(price.innerHTML),
-            quantity: parseFloat(document.getElementById("quantity").value),
+            // name: title.textContent,
+            // price: parseFloat(price.textContent),
+            quantity: parseInt(document.getElementById("quantity").value),
             _id: params,
+            color: selectColor,
           };
           console.log(infoProduct);
          let arrayOfProducts = [];
@@ -77,7 +82,7 @@ function addToCart() {
             console.log(arrayOfProducts)
       }
    } )
-}
+// }
 
 // document.getElementById("addToCart").onclick = function addToCart() {
 //    let objJson = {
