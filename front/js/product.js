@@ -1,22 +1,17 @@
-let params = new URL(window.location).searchParams.get("id");
-console.log("params");
-console.log(params);
+let productId = new URL(window.location).searchParams.get("id");
 
-// const item__img = document.getElementsByClassName("item__img");
+fetchItem();
 
-getItem();
-// addToCart();
-
-function getItem (){
-   fetch(`http://localhost:3000/api/products/${params}`)
+function fetchItem (){
+   fetch(`http://localhost:3000/api/products/${productId}`)
    .then(function(res) {
       if (res.ok) {
       return res.json();
       }
    })
-   .then(function(product) {
+   .then(function(fetchedProduct) {
       console.log("ok");
-      show(product);
+      show(fetchedProduct);
 
    })
    .catch(function(err) {
@@ -25,22 +20,20 @@ function getItem (){
    });
 }
 
-function show(value){
+function show(product){
    const item__img = document.querySelector(".item__img");
    let imgItem = document.createElement("img");
-console.log("Show say hello");
-console.log(item__img);
-   item__img.appendChild(imgItem).src =`${value.imageUrl}`;
-   item__img.appendChild(imgItem).alt =`${value.altTxt}`;
+   item__img.appendChild(imgItem).src =`${product.imageUrl}`;
+   item__img.appendChild(imgItem).alt =`${product.altTxt}`;
 
-   document.getElementById("price").textContent = `${value.price}`;
-   document.getElementById("description").textContent = `${value.description}`;
-   document.getElementById("title").textContent = `${value.name}`;
+   document.getElementById("price").textContent = `${product.price}`;
+   document.getElementById("description").textContent = `${product.description}`;
+   document.getElementById("title").textContent = `${product.name}`;
 
-   updateSelectorChoice(value.colors)
+   updateColorSelector(product.colors)
 }
 
-function updateSelectorChoice(colors) {
+function updateColorSelector(colors) {
    let select = document.getElementById("colors");
 
    for(let i = 0; i < colors.length; i++) {
@@ -52,46 +45,25 @@ function updateSelectorChoice(colors) {
    }
 }
 
-// function addToCart() {
-   // save also the color!
-   const btnAddToCart = document.getElementById("addToCart");
-   btnAddToCart.addEventListener("click", () =>{
-      const quantity = document.getElementById("quantity");
-      // const title = document.getElementById("title");
-      // const price = document.getElementById("price");
-      const selectColor = document.getElementById("colors").value;
-      
+const btnAddToCart = document.getElementById("addToCart");
+btnAddToCart.addEventListener("click", () =>{
+   const quantity = document.getElementById("quantity");
+   const color = document.getElementById("colors").value;
+   
 
-      if (quantity.value > 0 && quantity.value < 100) {
-         let infoProduct = {
-            // name: title.textContent,
-            // price: parseFloat(price.textContent),
-            quantity: parseInt(document.getElementById("quantity").value),
-            _id: params,
-            color: selectColor,
-          };
-          console.log(infoProduct);
-         let arrayOfProducts = [];
-         if (localStorage.getItem("products") !== null) {
-            arrayOfProducts = JSON.parse(localStorage.getItem("products"));
+   if (quantity.value > 0 && quantity.value < 100) {
+      let newProduct = {
+         quantity: parseInt(document.getElementById("quantity").value),
+         _id: params,
+         color: color,
+      };
 
-          } 
-          arrayOfProducts.push(infoProduct);
-            localStorage.setItem("products", JSON.stringify(arrayOfProducts));
-
-            console.log(arrayOfProducts)
-      }
-   } )
-// }
-
-// document.getElementById("addToCart").onclick = function addToCart() {
-//    let objJson = {
-//       id : objectID,
-//       quantity : document.getElementById("quantity").value,
-//       color : document.getElementById("colors").value
-//   }
-//   console.log(objJson);
-//   let cartItem = JSON.stringify(objJson);
-//   localStorage.setItem("cartItem", cartItem);
-// }
+      let products = [];
+      if (localStorage.getItem("products") !== null) {
+         products = JSON.parse(localStorage.getItem("products"));
+         } 
+         products.push(newProduct);
+         localStorage.setItem("products", JSON.stringify(products));
+   }
+} )
 
