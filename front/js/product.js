@@ -54,7 +54,7 @@ btnAddToCart.addEventListener("click", () =>{
    if (quantity.value > 0 && quantity.value < 100) {
       let newProduct = {
          quantity: parseInt(document.getElementById("quantity").value),
-         _id: params,
+         _id: productId,
          color: color,
       };
 
