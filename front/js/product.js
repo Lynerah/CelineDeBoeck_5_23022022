@@ -47,23 +47,54 @@ function updateColorSelector(colors) {
 
 const btnAddToCart = document.getElementById("addToCart");
 btnAddToCart.addEventListener("click", () =>{
+   addButtonEvent();
+} )
+
+function addButtonEvent() {
    const quantity = document.getElementById("quantity");
    const color = document.getElementById("colors").value;
-   
+   addItemToCart(quantity, color);
+}
 
-   if (quantity.value > 0 && quantity.value < 100) {
+function addItemToCart(quantity, color) {
+   // check quantity is enough to be add to cart
+
+   let quantityRequirement = quantity.value > 0 && quantity.value < 100;
+
+   if (quantityRequirement) {
       let newProduct = {
          quantity: parseInt(document.getElementById("quantity").value),
          _id: productId,
          color: color,
       };
-
-      let products = [];
-      if (localStorage.getItem("products") !== null) {
-         products = JSON.parse(localStorage.getItem("products"));
-         } 
-         products.push(newProduct);
-         localStorage.setItem("products", JSON.stringify(products));
+      storeProduct(newProduct);
    }
-} )
+}
 
+function storeProduct(newProduct) {
+   
+   let products = [];
+
+   // loadProduct from local storage
+   if (localStorage.getItem("products") !== null) {
+      products = JSON.parse(localStorage.getItem("products"));
+   } 
+
+   // try to find the index of an existing product
+   function alreadyInCart(product) {
+      return product._id == newProduct._id && product.color == newProduct.color;
+   }
+   let index = products.findIndex(alreadyInCart);
+
+   // if the product exist, update, else add
+   if (index !== -1) {
+      products[index].quantity += 1;
+
+   } else {
+      products.push(newProduct);
+   }
+
+   // save to local storage
+   localStorage.setItem("products", JSON.stringify(products));
+
+}
