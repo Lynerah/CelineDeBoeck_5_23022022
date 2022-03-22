@@ -53,6 +53,7 @@ function showProduct(index) {
 
    cart__item__content.classList.add("cart__item__content");
    cart__item__content__description.classList.add("cart__item__content__description");
+   priceItem.classList.add("price");
 
    articleCart.appendChild(cart__item__content);
    cart__item__content.appendChild(cart__item__content__description);
@@ -83,17 +84,43 @@ function showProduct(index) {
    content__settings__delete.classList.add("cart__item__content__settings__delete");
    content__settings.appendChild(content__settings__delete).innerHTML = `<p class="deleteItem${index}">Supprimer</p>`
 
+   //Total
+   totalPrice();
 
 }
+
+// function totalPrice() {
+//    ArrayOfPrice = [];
+
+//    for(let priceIndex in storedProducts){
+//       ArrayOfPrice.push(storedProducts[priceIndex].price * storedProducts[priceIndex].quantity);
+//       console.log(ArrayOfPrice);
+//    }
+//    const reducer = (accumulator, curr) => accumulator + curr;
+//    let total = ArrayOfPrice.reduce(reducer)
+//    document.getElementById("totalPrice").textContent = total;
+// }
 
 function totalPrice() {
-   ArrayOfPrice = [];
-   let total;
-   for(let i = 0; i< productsToShow.length; i+=1){
-      total += productsToShow[i].price * productsToShow[i].quantity
+   let totalPrice = 0;
+
+   for(let priceIndex in storedProducts){
+      totalPrice += storedProducts[priceIndex].price * storedProducts[priceIndex].quantity;
+      console.log(totalPrice);
    }
+   document.getElementById("totalPrice").textContent = totalPrice;
 
 }
+
+
+// function totalPrice() {
+//    let totalPrice = storedProducts.reduce(function(totalPrice, current, currIndex, arr){
+
+//       return totalPrice += current.price *current.quantity;
+//    });
+//    document.getElementById("totalPrice").textContent = totalPrice;
+
+// }
 
 function addEventListenerOnButton(index){
    const button = document.querySelector(".deleteItem"+index);

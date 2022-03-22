@@ -86,6 +86,8 @@ function storeProduct(newProduct) {
    }
    let index = products.findIndex(alreadyInCart);
 
+
+
    // if the product exist, update, else add
    if (index !== -1) {
       products[index].quantity += 1;
