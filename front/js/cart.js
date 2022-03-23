@@ -1,4 +1,5 @@
-let storedProducts = []
+let storedProducts = [];
+
 loadData()
 
 
@@ -76,7 +77,7 @@ function showProduct(index) {
 
    cart__item__content.appendChild(content__settings);
    content__settings.appendChild(content__settings__quantity).innerHTML = `<p>Qté : ${storedProducts[index].quantity}</p>
-   <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${storedProducts[index].quantity}">`;
+   <input type="number" class="itemQuantity${index}" name="itemQuantity" min="1" max="100" value="${storedProducts[index].quantity}">`;
 
    //CREATE div delete
 
@@ -86,6 +87,17 @@ function showProduct(index) {
 
    //Total
    totalPrice();
+   totalQuantity();
+
+   //Update Quantity
+   updateQuantityArticle(index, storedProducts[index].quantity);
+
+}
+
+
+function totalPrice() {
+   let sommeTotalPrice = storedProducts.reduce((previous, current) => previous + (current.price * current.quantity), 0);
+   document.getElementById("totalPrice").textContent = sommeTotalPrice;
 
 }
 
@@ -101,26 +113,30 @@ function showProduct(index) {
 //    document.getElementById("totalPrice").textContent = total;
 // }
 
-function totalPrice() {
-   let totalPrice = 0;
-
-   for(let priceIndex in storedProducts){
-      totalPrice += storedProducts[priceIndex].price * storedProducts[priceIndex].quantity;
-      console.log(totalPrice);
-   }
-   document.getElementById("totalPrice").textContent = totalPrice;
-
-}
-
-
 // function totalPrice() {
-//    let totalPrice = storedProducts.reduce(function(totalPrice, current, currIndex, arr){
+//    let totalPrice = 0;
 
-//       return totalPrice += current.price *current.quantity;
-//    });
+//    for(let priceIndex in storedProducts){
+//       totalPrice += storedProducts[priceIndex].price * storedProducts[priceIndex].quantity;
+//       console.log(totalPrice);
+//    }
 //    document.getElementById("totalPrice").textContent = totalPrice;
 
 // }
+
+
+
+
+function totalQuantity() {
+   let totalQuantity = 0;
+
+   for(let quantityIndex in storedProducts){
+      totalQuantity += storedProducts[quantityIndex].quantity;
+      // console.log(totalQuantity);
+   }
+   document.getElementById("totalQuantity").textContent = totalQuantity;
+
+}
 
 function addEventListenerOnButton(index){
    const button = document.querySelector(".deleteItem"+index);
@@ -130,3 +146,12 @@ function addEventListenerOnButton(index){
          location.reload();
       });
 }
+
+function updateQuantityArticle(index){
+  const itemQuantity = document.querySelector(".itemQuantity"+index);
+   itemQuantity.addEventListener("change", ()=>{
+      storedProducts[index].quantity = parseInt(document.querySelector(".itemQuantity"+index).value)
+      localStorage.setItem("products", JSON.stringify(storedProducts));
+      location.reload();
+   });
+};
