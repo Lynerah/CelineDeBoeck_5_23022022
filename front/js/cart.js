@@ -1,7 +1,7 @@
 let storedProducts = [];
 
 loadData()
-
+checkForm()
 
 function loadData() {
    storedProducts = JSON.parse(localStorage.getItem("products"));
@@ -155,3 +155,119 @@ function updateQuantityArticle(index){
       location.reload();
    });
 };
+
+function checkForm(){
+   const submit = document.getElementById("order");
+   let firstName = document.getElementById("firstName");
+   let lastName = document.getElementById("lastName");
+   let address = document.getElementById("address");
+   let city = document.getElementById("city");
+   let email = document.getElementById("email");
+   let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+   let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
+   let addressErrorMsg = document.getElementById("addressErrorMsg");
+   let cityErrorMsg = document.getElementById("cityErrorMsg");
+   let emailErrorMsg = document.getElementById("emailErrorMsg");
+   function msgErrGlobal (){
+      return "Vous devez renseigner tous les champs !"
+   }
+   submit.addEventListener("click", (e) =>{
+      if (!firstName.value) {
+         firstNameErrorMsg.textContent = msgErrGlobal();
+         e.preventDefault();
+      } else if (!lastName.value){
+         lastNameErrorMsg.textContent = msgErrGlobal();
+         e.preventDefault();
+      } else if (!address.value){
+         addressErrorMsg.textContent = msgErrGlobal();
+         e.preventDefault();
+      } else if (!city.value){
+         cityErrorMsg.textContent = msgErrGlobal();
+         e.preventDefault();
+      } else if (!email.value){
+         emailErrorMsg.textContent = msgErrGlobal();
+         e.preventDefault();
+      } 
+      else{
+         console.log("c'est ok")
+         e.preventDefault();
+         correctInputTest(e)
+      }
+   })
+
+}
+
+function correctInputTest (e){
+   if(firstName.value == /[0-9]/g){
+      firstNameErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
+      e.preventDefault();
+   } else if (lastName.value == /[0-9]/g){
+      lastNameErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
+      e.preventDefault();
+   } else if (city.value == /[0-9]/g){
+      cityErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
+      e.preventDefault();
+   } 
+   else if (email.value == /^[@]/){
+      emailErrorMsg.textContent = "Veuillez introduire une adresse valide";
+      e.preventDefault();
+   } 
+   else{
+      e.preventDefault();
+      console.log("c'est tjs ok")
+      sendOrder();
+      
+
+   }
+
+
+}
+
+function sendOrder(){
+
+   for (let index in storedProducts) {
+
+   const orderProducts = {
+      contact :{
+      
+         "firstName": firstName.value,
+         "lastName": lastName.value,
+         "city": city.value,
+         "address": address.value,
+         "email": email.value,
+      }, products : [storedProducts[index]._id,] 
+
+   };
+
+   storedProducts.push(orderProducts);
+
+   console.log(storedProducts)
+   console.log(orderProducts)
+   const sendOption = {
+      method: "POST",
+      body: JSON.stringify(orderProducts),
+      headers: {
+         'Accept': 'application/json', 
+         'Content-Type': 'application/json'
+       },
+   }
+
+
+   fetch(`http://localhost:3000/api/products/order`, sendOption)
+   .then(function(res) {
+      if (res.ok) {
+         return res.json();
+      }
+   })
+   .then(function(data) {
+      console.log("envoyé");
+      localStorage.setItem("orderId", JSON.stringify(data.products[_id]));
+      // document.location.href = "confirmation.html";
+
+
+   })
+   .catch(function(err) {
+      console.log(err);
+   }); 
+   }
+}
