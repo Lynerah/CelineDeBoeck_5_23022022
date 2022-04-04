@@ -261,9 +261,9 @@ function sendOrder(){
    })
    .then(function(data) {
       console.log("envoyé");
-      localStorage.setItem("orderId", JSON.stringify(data.products[_id]));
+      localStorage.setItem("orderId", data.orderId);
       // document.location.href = "confirmation.html";
-
+   
 
    })
    .catch(function(err) {
