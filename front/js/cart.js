@@ -262,7 +262,7 @@ function sendOrder(){
    .then(function(data) {
       console.log("envoyé");
       localStorage.setItem("orderId", data.orderId);
-      // document.location.href = "confirmation.html";
+      document.location.href = "confirmation.html";
    
 
    })
