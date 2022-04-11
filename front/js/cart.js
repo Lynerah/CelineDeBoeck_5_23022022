@@ -5,9 +5,9 @@ checkForm()
 
 function loadData() {
    storedProducts = JSON.parse(localStorage.getItem("products"));
-
+   document.getElementById("totalQuantity").textContent = 0;
+   document.getElementById("totalPrice").textContent = 0;
    for (let index in storedProducts) {
-
       fetch(`http://localhost:3000/api/products/${storedProducts[index]._id}`)
       .then(function(res) {
          if (res.ok) {
@@ -88,6 +88,7 @@ function showProduct(index) {
    //Total
    totalPrice();
    totalQuantity();
+
 
    //Update Quantity
    updateQuantityArticle(index, storedProducts[index].quantity);
