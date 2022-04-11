@@ -61,7 +61,9 @@ function addItemToCart(quantity, color) {
 
    let quantityRequirement = quantity.value > 0 && quantity.value < 100;
 
-   if (quantityRequirement) {
+   let colorRequirement = color !== "";
+
+   if (quantityRequirement && colorRequirement) {
       let newProduct = {
          quantity: parseInt(document.getElementById("quantity").value),
          _id: productId,
