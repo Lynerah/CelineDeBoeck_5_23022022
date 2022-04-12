@@ -75,9 +75,18 @@ function showProduct(index) {
    content__settings.classList.add("cart__item__content__settings");
    content__settings__quantity.classList.add("cart__item__content__settings__quantity");
 
+   let quantityRequirement = storedProducts[index].quantity > 0 && storedProducts[index].quantity < 100;
    cart__item__content.appendChild(content__settings);
-   content__settings.appendChild(content__settings__quantity).innerHTML = `<p>Qté : ${storedProducts[index].quantity}</p>
-   <input type="number" class="itemQuantity${index}" name="itemQuantity" min="1" max="100" value="${storedProducts[index].quantity}">`;
+   if (quantityRequirement) {
+      content__settings.appendChild(content__settings__quantity).innerHTML = `<p>Qté : ${storedProducts[index].quantity}</p>
+      <input type="number" class="itemQuantity${index}" name="itemQuantity" min="1" max="100" value="${storedProducts[index].quantity}">`;
+      totalPrice();
+      totalQuantity();
+   }else{
+      content__settings.appendChild(content__settings__quantity).innerHTML = `<p>Qté : ${storedProducts[index].quantity}</p>
+      <input type="number" class="itemQuantity${index}" name="itemQuantity" min="1" max="100" value="0">`;
+   }
+
 
    //CREATE div delete
 
@@ -86,8 +95,8 @@ function showProduct(index) {
    content__settings.appendChild(content__settings__delete).innerHTML = `<p class="deleteItem${index}">Supprimer</p>`
 
    //Total
-   totalPrice();
-   totalQuantity();
+   
+ 
 
 
    //Update Quantity
