@@ -133,7 +133,6 @@ function totalQuantity() {
 
    for(let quantityIndex in storedProducts){
       totalQuantity += storedProducts[quantityIndex].quantity;
-      // console.log(totalQuantity);
    }
    document.getElementById("totalQuantity").textContent = totalQuantity;
 
@@ -199,17 +198,22 @@ function checkForm(){
 }
 
 function correctInputTest (e){
-   if(firstName.value == /[0-9]/g){
+   const regex = /[0-9]/g;
+   const regexEmail = /[@]/;
+
+   if(regex.test(firstName.value)){
       firstNameErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
       e.preventDefault();
-   } else if (lastName.value == /[0-9]/g){
+   } 
+   else if (regex.test(lastName.value)){
       lastNameErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
       e.preventDefault();
-   } else if (city.value == /[0-9]/g){
+   } 
+   else if (regex.test(city.value) ){
       cityErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
       e.preventDefault();
    } 
-   else if (email.value == /^[@]/){
+   else if (!regexEmail.test(email.value)){
       emailErrorMsg.textContent = "Veuillez introduire une adresse valide";
       e.preventDefault();
    } 
@@ -220,6 +224,7 @@ function correctInputTest (e){
       
 
    }
+
 
 
 }
