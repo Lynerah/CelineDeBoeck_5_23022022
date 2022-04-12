@@ -266,11 +266,8 @@ function sendOrder(){
       }
    })
    .then(function(data) {
-      console.log("envoyé");
-      localStorage.setItem("orderId", data.orderId);
-      document.location.href = "confirmation.html";
-   
-
+      localStorage.clear();
+      document.location.href = `confirmation.html?id=${data.orderId}`;
    })
    .catch(function(err) {
       console.log(err);
