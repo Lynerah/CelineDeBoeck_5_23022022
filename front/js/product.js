@@ -63,6 +63,7 @@ function addItemToCart(quantity, color) {
 
    let colorRequirement = color !== "";
 
+
    if (quantityRequirement && colorRequirement) {
       let newProduct = {
          quantity: parseInt(document.getElementById("quantity").value),
@@ -92,7 +93,8 @@ function storeProduct(newProduct) {
 
    // if the product exist, update, else add
    if (index !== -1) {
-      products[index].quantity += 1;
+      quantity = parseInt(document.getElementById("quantity").value),
+      products[index].quantity += quantity;
 
    } else {
       products.push(newProduct);
