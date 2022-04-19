@@ -1,6 +1,8 @@
 let storedProducts = [];
 
 loadData()
+//Verification Form
+correctInputTest();
 checkForm()
 
 function loadData() {
@@ -28,7 +30,9 @@ function loadData() {
          console.log(err);
       }); 
    }
+
 }
+
 
 function showProduct(index) {
   
@@ -75,16 +79,13 @@ function showProduct(index) {
    content__settings.classList.add("cart__item__content__settings");
    content__settings__quantity.classList.add("cart__item__content__settings__quantity");
 
-   let quantityRequirement = storedProducts[index].quantity > 0 && storedProducts[index].quantity < 100;
+   let quantityRequirement = storedProducts[index].quantity > 0 && storedProducts[index].quantity <= 100;
    cart__item__content.appendChild(content__settings);
    if (quantityRequirement) {
       content__settings.appendChild(content__settings__quantity).innerHTML = `<p>Qté : ${storedProducts[index].quantity}</p>
       <input type="number" class="itemQuantity${index}" name="itemQuantity" min="1" max="100" value="${storedProducts[index].quantity}">`;
       totalPrice();
       totalQuantity();
-   }else{
-      content__settings.appendChild(content__settings__quantity).innerHTML = `<p>Qté : ${storedProducts[index].quantity}</p>
-      <input type="number" class="itemQuantity${index}" name="itemQuantity" min="1" max="100" value="0">`;
    }
 
 
@@ -101,6 +102,8 @@ function showProduct(index) {
 
    //Update Quantity
    updateQuantityArticle(index, storedProducts[index].quantity);
+
+
 
 }
 
@@ -160,6 +163,27 @@ function updateQuantityArticle(index){
   const itemQuantity = document.querySelector(".itemQuantity"+index);
    itemQuantity.addEventListener("change", ()=>{
       storedProducts[index].quantity = parseInt(document.querySelector(".itemQuantity"+index).value)
+      if(storedProducts[index].quantity > 100){
+         storedProducts[index].quantity = 100;
+         localStorage.setItem("products", JSON.stringify(storedProducts));
+         itemQuantity.textContent = "100";
+      }
+      if(storedProducts[index].quantity <= 0){
+         storedProducts[index].quantity = 1;
+         localStorage.setItem("products", JSON.stringify(storedProducts));
+         itemQuantity.textContent = "1";
+      }
+            // if (input.value > 100) {
+            //     alert("La quantité ne peut dépasser 100 unités pour un même article.");
+            //     input.value = 100;
+            //     Object.defineProperty(searchItem, "itemDataQuantity", { value: input.value });
+            //     localStorage.setItem("cart", JSON.stringify(itemsDataCart));
+            //     input.textContent = "100";
+            // } else if (input.value > 0 && input.value <= 100) {
+            //     Object.defineProperty(searchItem, "itemDataQuantity", { value: input.value });
+            //     localStorage.setItem("cart", JSON.stringify(itemsDataCart));
+            // }
+
       localStorage.setItem("products", JSON.stringify(storedProducts));
       location.reload();
    });
@@ -198,88 +222,106 @@ function checkForm(){
          e.preventDefault();
       } 
       else{
-         console.log("c'est ok")
+         // console.log(correctInputTest())
          e.preventDefault();
-         correctInputTest(e)
+         // correctInputTest(e)
+      
+         sendOrder();
       }
    })
 
 }
 
-function correctInputTest (e){
+function correctInputTest (){
    const regex = /[0-9]/g;
    const regexEmail = /[@]/;
 
-   if(regex.test(firstName.value)){
-      firstNameErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
-      e.preventDefault();
-   } 
-   else if (regex.test(lastName.value)){
-      lastNameErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
-      e.preventDefault();
-   } 
-   else if (regex.test(city.value) ){
-      cityErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
-      e.preventDefault();
-   } 
-   else if (!regexEmail.test(email.value)){
-      emailErrorMsg.textContent = "Veuillez introduire une adresse valide";
-      e.preventDefault();
-   } 
-   else{
-      e.preventDefault();
-      console.log("c'est tjs ok")
-      sendOrder();
-      
-
-   }
 
 
+   firstName.addEventListener("input", function (e) {
+      if(regex.test(firstName.value)){
+         firstNameErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
+         e.preventDefault();
+      } else {
+          document.getElementById("firstNameErrorMsg").innerText = "";
+          return true;
+      };
+   });
 
-}
+   lastName.addEventListener("input", function (e) {
+      if (regex.test(lastName.value)){
+         lastNameErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
+         e.preventDefault();
+      }  else {
+         document.getElementById("lastNameErrorMsg").innerText = "";
+         return true;
+      };
+   });
+
+   city.addEventListener("input", function (e) {
+      if (regex.test(city.value) ){
+         cityErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
+         e.preventDefault();
+      }  else {
+         document.getElementById("cityErrorMsg").innerText = "";
+         return true;
+      };
+   });
+   email.addEventListener("input", function (e) {
+      if (!regexEmail.test(email.value)){
+         emailErrorMsg.textContent = "Veuillez introduire une adresse valide";
+         e.preventDefault();
+      } else {
+         document.getElementById("emailErrorMsg").innerText = "";
+         return true;
+      };
+   });
+  
+};
 
 function sendOrder(){
 
-   for (let index in storedProducts) {
+   // if(correctInputTest() == true){
+      for (let index in storedProducts) {
+         const orderProducts = {
+            contact :{
+            
+               "firstName": firstName.value,
+               "lastName": lastName.value,
+               "city": city.value,
+               "address": address.value,
+               "email": email.value,
+            }, products : [storedProducts[index]._id,] 
 
-   const orderProducts = {
-      contact :{
-      
-         "firstName": firstName.value,
-         "lastName": lastName.value,
-         "city": city.value,
-         "address": address.value,
-         "email": email.value,
-      }, products : [storedProducts[index]._id,] 
+         };
 
-   };
+         storedProducts.push(orderProducts);
 
-   storedProducts.push(orderProducts);
-
-   console.log(storedProducts)
-   console.log(orderProducts)
-   const sendOption = {
-      method: "POST",
-      body: JSON.stringify(orderProducts),
-      headers: {
-         'Accept': 'application/json', 
-         'Content-Type': 'application/json'
-       },
-   }
+         console.log(storedProducts)
+         console.log(orderProducts)
+         const sendOption = {
+            method: "POST",
+            body: JSON.stringify(orderProducts),
+            headers: {
+               'Accept': 'application/json', 
+               'Content-Type': 'application/json'
+            },
+         }
 
 
-   fetch(`http://localhost:3000/api/products/order`, sendOption)
-   .then(function(res) {
-      if (res.ok) {
-         return res.json();
+         fetch(`http://localhost:3000/api/products/order`, sendOption)
+         .then(function(res) {
+            if (res.ok) {
+               return res.json();
+            }
+         })
+         .then(function(data) {
+            localStorage.clear();
+            document.location.href = `confirmation.html?id=${data.orderId}`;
+         })
+         .catch(function(err) {
+            console.log(err);
+         }); 
       }
-   })
-   .then(function(data) {
-      localStorage.clear();
-      document.location.href = `confirmation.html?id=${data.orderId}`;
-   })
-   .catch(function(err) {
-      console.log(err);
-   }); 
-   }
+   // }
 }
