@@ -205,38 +205,50 @@ function checkForm(){
       return "Vous devez renseigner tous les champs !"
    }
    submit.addEventListener("click", (e) =>{
-      if (!firstName.value) {
-         firstNameErrorMsg.textContent = msgErrGlobal();
+      inputNotEmpty();
+      preSend ();
+      console.log(inputNotEmpty())
+      console.log(preSend ())
+      if (inputNotEmpty == true && preSend == true){
+         // sendOrder();
          e.preventDefault();
-      } else if (!lastName.value){
-         lastNameErrorMsg.textContent = msgErrGlobal();
+         console.log(";-D")
+      }else{
+         firstNameErrorMsg.textContent = "eh merde"
          e.preventDefault();
-      } else if (!address.value){
-         addressErrorMsg.textContent = msgErrGlobal();
-         e.preventDefault();
-      } else if (!city.value){
-         cityErrorMsg.textContent = msgErrGlobal();
-         e.preventDefault();
-      } else if (!email.value){
-         emailErrorMsg.textContent = msgErrGlobal();
-         e.preventDefault();
-      } 
-      else{
-         // console.log(correctInputTest())
-         e.preventDefault();
-         // correctInputTest(e)
-      
-         sendOrder();
       }
+      e.preventDefault();
+      console.log("x-@")
+     
    })
 
+}
+
+function inputNotEmpty (e){
+   if (!firstName.value) {
+      firstNameErrorMsg.textContent = msgErrGlobal();
+      e.preventDefault();
+   } else if (!lastName.value){
+      lastNameErrorMsg.textContent = msgErrGlobal();
+      e.preventDefault();
+   } else if (!address.value){
+      addressErrorMsg.textContent = msgErrGlobal();
+      e.preventDefault();
+   } else if (!city.value){
+      cityErrorMsg.textContent = msgErrGlobal();
+      e.preventDefault();
+   } else if (!email.value){
+      emailErrorMsg.textContent = msgErrGlobal();
+      e.preventDefault();
+   } 
+   else{
+   return true
+   }
 }
 
 function correctInputTest (){
    const regex = /[0-9]/g;
    const regexEmail = /[@]/;
-
-
 
    firstName.addEventListener("input", function (e) {
       if(regex.test(firstName.value)){
@@ -276,9 +288,28 @@ function correctInputTest (){
          return true;
       };
    });
-  
 };
 
+function preSend (e){
+   const regex = /[0-9]/g;
+   const regexEmail = /[@]/;
+   if(regex.test(firstName.value) ==false && regex.test(lastName.value) == false && regex.test(city.value) == false && !regexEmail.test(email.value) == false){
+      console.log("tous est juste")
+      return true   
+   }
+   else{ 
+      console.log("la merde");
+      e.preventDefault();
+      // let styleColor = "#ff0000"
+      // document.getElementById(firstNameErrorMsg).style.color = styleColor;
+      // document.getElementById(lastNameErrorMsg).style.color = styleColor;
+      // document.getElementById(cityErrorMsg).style.color = styleColor;
+      // document.getElementById(emailErrorMsg).style.color = styleColor;
+      // e.preventDefault();
+      return false
+   }
+   
+}
 function sendOrder(){
 
    // if(correctInputTest() == true){
