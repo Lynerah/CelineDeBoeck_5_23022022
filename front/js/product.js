@@ -2,6 +2,7 @@ let productId = new URL(window.location).searchParams.get("id");
 
 fetchItem();
 
+// Fetch products from backend
 function fetchItem (){
    fetch(`http://localhost:3000/api/products/${productId}`)
    .then(function(res) {
@@ -10,16 +11,14 @@ function fetchItem (){
       }
    })
    .then(function(fetchedProduct) {
-      console.log("ok");
       show(fetchedProduct);
-
    })
    .catch(function(err) {
-      // Une erreur est survenue
       console.log(err);
    });
 }
 
+// Create UI element and show products values
 function show(product){
    const item__img = document.querySelector(".item__img");
    let imgItem = document.createElement("img");
@@ -33,6 +32,7 @@ function show(product){
    updateColorSelector(product.colors)
 }
 
+// Update colors selection
 function updateColorSelector(colors) {
    let select = document.getElementById("colors");
 
@@ -74,6 +74,7 @@ function addItemToCart(quantity, color) {
    }
 }
 
+// save products in local storage
 function storeProduct(newProduct) {
    
    let products = [];
@@ -89,18 +90,14 @@ function storeProduct(newProduct) {
    }
    let index = products.findIndex(alreadyInCart);
 
-
-
    // if the product exist, update, else add
    if (index !== -1) {
       quantity = parseInt(document.getElementById("quantity").value),
       products[index].quantity += quantity;
-
    } else {
       products.push(newProduct);
    }
 
    // save to local storage
    localStorage.setItem("products", JSON.stringify(products));
-
 }

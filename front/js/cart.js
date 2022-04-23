@@ -1,9 +1,16 @@
+// Mains values
 let storedProducts = [];
-const regex = /[0-9]/g;
-const regexEmail = /[@]/;
 
+
+const regex = /(?=^.{3,15}$)(?!^[_-].+)(?!.+[_-]$)(?!.*[_-]{2,})[^<>[\]{}|\\\/^~%# :;,$%@!&*()+={}'"`.?0-9\0-\cZ]+$/;
+// General Email Regex (RFC 5322 Official Standard)
+// https://www.emailregex.com
+const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+// Load stored data from local storage
 loadStoredData()
 
+// UI Elements
 let firstName = document.getElementById("firstName");
 let lastName = document.getElementById("lastName");
 let address = document.getElementById("address");
@@ -13,17 +20,23 @@ let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
 let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
 let addressErrorMsg = document.getElementById("addressErrorMsg");
 let cityErrorMsg = document.getElementById("cityErrorMsg");
-let emailErrorMsg = document.getElementById("emailErrorMsg");
+let emailErrorMsg = document.getElementById("emailErrorMsg"); 
 
+// call setups methods
+// - setup fields values
 setupDefaultFieldsValue()
+// - setup fields conditions
 setupFieldsConditions();
+// - setup send button
 setupSendButton()
 
+// Set price and quantity to 0 by default 
 function setupDefaultFieldsValue() {
    document.getElementById("totalQuantity").textContent = 0;
    document.getElementById("totalPrice").textContent = 0;
 }
 
+// Fetch data for single product 
 function loadStoredData() {
    storedProducts = JSON.parse(localStorage.getItem("products"));
    for (let index in storedProducts) {
@@ -35,35 +48,36 @@ function loadStoredData() {
       })
       .then(function(fetchedProduct) {
 
+         // update storedProduct values at index with fetched values
          storedProducts[index].price = fetchedProduct.price;
          storedProducts[index].name = fetchedProduct.name;
          storedProducts[index].imageUrl = fetchedProduct.imageUrl;
 
-         createElement(index);
-         addEventListenerOnButton(index);
+         createUIElement(index);
+         deleteButtonEventListener(index);
       })
       .catch(function(err) {
-         console.log(err);
+        console.log(err);
       }); 
    }
 }
 
-function createElement(index) {
+// Create HTML UI element 
+function createUIElement(index) {
   
-   //CREATE <article>
+   // CREATE <article>
    let articleCart = document.createElement("article");
    articleCart.classList.add("cart__item");
    cart__items.appendChild(articleCart);
 
-   //CREATE div with img
+   // CREATE div with img
    let cart__item__img = document.createElement("div");
    let imgItem = document.createElement("img");
    cart__item__img.classList.add("cart__item__img");
    articleCart.appendChild(cart__item__img);
    cart__item__img.appendChild(imgItem).src = `${storedProducts[index].imageUrl}`;
 
-   //CREATE div description item
-
+   // CREATE div description item
    let cart__item__content = document.createElement("div");
    let cart__item__content__description = document.createElement("div");
    let titleCartItem = document.createElement("h2");
@@ -84,7 +98,7 @@ function createElement(index) {
    priceItem.textContent = storedProducts[index].price+ " €";
    colorInfoItem.textContent = storedProducts[index].color;
 
-   //CREATE block quantity
+   // CREATE block quantity
    let content__settings = document.createElement("div");
    let content__settings__quantity = document.createElement("div");
    let quantityItem = `<p>Qté : ${storedProducts[index].quantity}</p>
@@ -103,21 +117,22 @@ function createElement(index) {
       updateTotalQuantity();
    }
 
-   //CREATE div delete
+   // CREATE div delete
    let content__settings__delete = document.createElement("div");
    content__settings__delete.classList.add("cart__item__content__settings__delete");
    content__settings.appendChild(content__settings__delete).innerHTML = `<p class="deleteItem${index}">Supprimer</p>`
 
-   //Update Quantity
+   // Update Quantity
    updateArticleQuantity(index, storedProducts[index].quantity);
 }
 
-
+// Calculate the total price and show
 function totalPrice() {
    let result = storedProducts.reduce((previous, current) => previous + (current.price * current.quantity), 0);
    document.getElementById("totalPrice").textContent = result;
 }
 
+// Update the total quantity of items in the cart
 function updateTotalQuantity() {
    let result = 0;
    for (let quantityIndex in storedProducts) {
@@ -126,7 +141,8 @@ function updateTotalQuantity() {
    document.getElementById("totalQuantity").textContent = result;
 }
 
-function addEventListenerOnButton(index) {
+// Add delete event listener on button
+function deleteButtonEventListener(index) {
    const button = document.querySelector(".deleteItem"+index);
    button.addEventListener("click", () => {
       storedProducts.splice(index, 1);
@@ -135,6 +151,7 @@ function addEventListenerOnButton(index) {
    });
 }
 
+// Check the quantity entered in the input and update the quantity in the localStorage
 function updateArticleQuantity(index) {
   const item = document.querySelector(".itemQuantity" + index);
    item.addEventListener("change", () => {
@@ -154,24 +171,26 @@ function updateArticleQuantity(index) {
    });
 };
 
+// Setup regex condition
+// Add event listener on differents fields to show error message when the regex expression is not satisfied
 function setupFieldsConditions() {
    firstName.addEventListener("input", function(e) {
       if(regex.test(firstName.value)) {
+         document.getElementById("firstNameErrorMsg").innerText = "";
+         return true;
+      } else {
          firstNameErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
          e.preventDefault();
-      } else {
-          document.getElementById("firstNameErrorMsg").innerText = "";
-          return true;
       };
    });
 
    lastName.addEventListener("input", function(e) {
       if (regex.test(lastName.value)) {
-         lastNameErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
-         e.preventDefault();
-      }  else {
          document.getElementById("lastNameErrorMsg").innerText = "";
          return true;
+      }  else {
+         lastNameErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
+         e.preventDefault();
       };
    });
 
@@ -187,11 +206,11 @@ function setupFieldsConditions() {
 
    city.addEventListener("input", function(e) {
       if (regex.test(city.value)) {
-         cityErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
-         e.preventDefault();
-      }  else {
          document.getElementById("cityErrorMsg").innerText = "";
          return true;
+      }  else {
+         cityErrorMsg.textContent = "Ce champs ne peut pas contenir de chiffre";
+         e.preventDefault();
       };
    });
 
@@ -206,6 +225,7 @@ function setupFieldsConditions() {
    });
 };
 
+// Setup the event listener of the send button
 function setupSendButton() {
    const submit = document.getElementById("order");
    submit.addEventListener("click", (e) => {
@@ -223,10 +243,12 @@ function setupSendButton() {
    })
 }
 
+// General message error
 function msgErrGlobal() {
    return "Vous devez renseigner tous les champs!"
 }
 
+// Logic for check all inputs are completed
 function updateFieldsStatus() {
    if (!firstName.value) {
       firstNameErrorMsg.textContent = msgErrGlobal();
@@ -249,6 +271,7 @@ function updateFieldsStatus() {
    }
 }
 
+//check all inputs are completed
 function fieldsAreFull() {
    if (firstName.value && lastName.value && address.value && city.value && email.value) {
       return true
@@ -257,6 +280,7 @@ function fieldsAreFull() {
    }
 }
 
+//
 function fieldsValueAreValid() {
 
    let firstNameIsValid = !regex.test(lastName.value);
